@@ -1,25 +1,9 @@
 @extends('layouts/app_auth')
 
 @section('contents')
-        <div class="main_content_iner ">
+    <div class="main_content_iner ">
         <div class="container-fluid p-0 sm_padding_15px">
             <div class="row justify-content-center">
-                <div class="col-12">
-                    <div class="dashboard_header mb_50">
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <div class="dashboard_header_title">
-                                    <h3> Directory Dashboard</h3>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="dashboard_breadcam text-end">
-                                    <p><a href="index-2.html">Dashboard</a> <i class="fas fa-caret-right"></i>   Address Book</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <div class="col-lg-8 col-xl-8">
                     <div class="white_box mb_30">
                         <div class="box_header">
@@ -437,8 +421,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
+
 
 @endsection
