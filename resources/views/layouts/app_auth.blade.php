@@ -30,7 +30,7 @@
                                         </div>
                                         <div class="col-lg-6">
                                             <div class="dashboard_breadcam text-end">
-                                                <p><a href="index-2.html">Dashboard</a> <i class="fas fa-caret-right"></i>   Address Book</p>
+                                                <p><a href="{{ route('dashboard') }}">Dashboard</a> <i class="fas fa-caret-right"></i>   Address Book</p>
                                             </div>
                                         </div>
                                     </div>
