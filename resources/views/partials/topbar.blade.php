@@ -155,30 +155,25 @@
             </div>
         </div>
 
-        <button class="btn btn-primary" data-toggle="modal" data-target="#logoutModal">
-    Test Modal
-</button>
+        @push('scripts')
+            <script>
+                $(function () {
 
+                    $('#logoutBtn').on('click', function (e) {
+                        e.preventDefault();
+                        $('#logoutModal').modal('show');
+                    });
 
-@push('scripts')
-    <script>
-        $(function () {
+                    $('#canceltBtn').on('click', function (e) {
+                        e.preventDefault();
+                        $('#logoutModal').modal('hide');
+                    });
+                    $('#closeButton').on('click', function (e) {
+                        e.preventDefault();
+                        $('#logoutModal').modal('hide');
+                    });
 
-            $('#logoutBtn').on('click', function (e) {
-                e.preventDefault();
-                $('#logoutModal').modal('show');
-            });
+                });
+            </script>
 
-            $('#canceltBtn').on('click', function (e) {
-                e.preventDefault();
-                $('#logoutModal').modal('hide');
-            });
-            $('#closeButton').on('click', function (e) {
-                e.preventDefault();
-                $('#logoutModal').modal('hide');
-            });
-
-        });
-    </script>
-
-@endpush
+        @endpush
