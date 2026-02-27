@@ -4,11 +4,16 @@ namespace Database\Seeders;
 
 use App\Models\Menu;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Log;
 
 class MenuSeeder extends Seeder
 {
     public function run(): void
     {
+        // Clear existing menus (optional)
+        // Menu::truncate();
+        
         // Admin Menus
         $adminMenus = [
             // Main Dashboard
@@ -108,13 +113,13 @@ class MenuSeeder extends Seeder
             ],
         ];
 
-        // Create admin menus
-        foreach ($adminMenus as $menu) {
-            Menu::create($menu);
+        // Create admin menus with route check
+        foreach ($adminMenus as $menuData) {
+            $this->createMenu($menuData);
         }
 
         // Reports Submenus
-        $reportsParent = Menu::where('name', 'Reports')->first();
+        $reportsParent = Menu::where('name', 'Reports')->where('role', 'admin')->first();
         
         if ($reportsParent) {
             $reportsSubmenus = [
@@ -147,13 +152,13 @@ class MenuSeeder extends Seeder
                 ]
             ];
 
-            foreach ($reportsSubmenus as $submenu) {
-                Menu::create($submenu);
+            foreach ($reportsSubmenus as $submenuData) {
+                $this->createMenu($submenuData);
             }
         }
 
         // Settings Header
-        Menu::create([
+        $this->createMenu([
             'name' => 'SETTINGS',
             'header_text' => 'SETTINGS',
             'role' => 'admin',
@@ -162,7 +167,7 @@ class MenuSeeder extends Seeder
         ]);
 
         // Settings Parent
-        $settingsParent = Menu::create([
+        $settingsParent = $this->createMenu([
             'name' => 'Settings',
             'icon' => 'bi bi-gear',
             'role' => 'admin',
@@ -170,54 +175,56 @@ class MenuSeeder extends Seeder
             'section' => 'main'
         ]);
 
-        // Settings Submenus
-        $settingsSubmenus = [
-            [
-                'name' => 'General Settings',
-                'icon' => 'bi bi-sliders',
-                'route' => 'settings.general',
-                'role' => 'admin',
-                'parent_id' => $settingsParent->id,
-                'order' => 1,
-                'section' => 'submenu'
-            ],
-            [
-                'name' => 'Profile',
-                'icon' => 'bi bi-person',
-                'route' => 'profile.edit',
-                'role' => 'both',
-                'parent_id' => $settingsParent->id,
-                'order' => 2,
-                'section' => 'submenu'
-            ],
-            [
-                'name' => 'Notification Settings',
-                'icon' => 'bi bi-bell',
-                'route' => 'settings.notifications',
-                'role' => 'admin',
-                'parent_id' => $settingsParent->id,
-                'order' => 3,
-                'section' => 'submenu'
-            ],
-            [
-                'name' => 'Payment Gateway Settings',
-                'icon' => 'bi bi-credit-card',
-                'route' => 'settings.payment',
-                'role' => 'admin',
-                'parent_id' => $settingsParent->id,
-                'order' => 4,
-                'section' => 'submenu'
-            ]
-        ];
+        if ($settingsParent) {
+            // Settings Submenus
+            $settingsSubmenus = [
+                [
+                    'name' => 'General Settings',
+                    'icon' => 'bi bi-sliders',
+                    'route' => 'settings.general',
+                    'role' => 'admin',
+                    'parent_id' => $settingsParent->id,
+                    'order' => 1,
+                    'section' => 'submenu'
+                ],
+                [
+                    'name' => 'Profile',
+                    'icon' => 'bi bi-person',
+                    'route' => 'profile.edit',
+                    'role' => 'both',
+                    'parent_id' => $settingsParent->id,
+                    'order' => 2,
+                    'section' => 'submenu'
+                ],
+                [
+                    'name' => 'Notification Settings',
+                    'icon' => 'bi bi-bell',
+                    'route' => 'settings.notifications',
+                    'role' => 'admin',
+                    'parent_id' => $settingsParent->id,
+                    'order' => 3,
+                    'section' => 'submenu'
+                ],
+                [
+                    'name' => 'Payment Gateway Settings',
+                    'icon' => 'bi bi-credit-card',
+                    'route' => 'settings.payment',
+                    'role' => 'admin',
+                    'parent_id' => $settingsParent->id,
+                    'order' => 4,
+                    'section' => 'submenu'
+                ]
+            ];
 
-        foreach ($settingsSubmenus as $submenu) {
-            Menu::create($submenu);
+            foreach ($settingsSubmenus as $submenuData) {
+                $this->createMenu($submenuData);
+            }
         }
 
         // ========== USER MENUS ==========
         
         // User Dashboard
-        Menu::create([
+        $this->createMenu([
             'name' => 'Dashboard',
             'icon' => 'bi bi-speedometer2',
             'route' => 'dashboard',
@@ -227,7 +234,7 @@ class MenuSeeder extends Seeder
         ]);
 
         // My Profile
-        Menu::create([
+        $this->createMenu([
             'name' => 'My Profile',
             'icon' => 'bi bi-person-circle',
             'route' => 'profile.edit',
@@ -237,7 +244,7 @@ class MenuSeeder extends Seeder
         ]);
 
         // Team
-        Menu::create([
+        $this->createMenu([
             'name' => 'Users (Staff / Team)',
             'icon' => 'bi bi-people',
             'route' => 'team.index',
@@ -247,7 +254,7 @@ class MenuSeeder extends Seeder
         ]);
 
         // Projects
-        Menu::create([
+        $this->createMenu([
             'name' => 'Projects / Items',
             'icon' => 'bi bi-kanban',
             'route' => 'projects.index',
@@ -257,7 +264,7 @@ class MenuSeeder extends Seeder
         ]);
 
         // Billing Header
-        Menu::create([
+        $this->createMenu([
             'name' => 'BILLING',
             'header_text' => 'BILLING',
             'role' => 'user',
@@ -266,7 +273,7 @@ class MenuSeeder extends Seeder
         ]);
 
         // Invoices
-        Menu::create([
+        $this->createMenu([
             'name' => 'Invoices / Billing',
             'icon' => 'bi bi-receipt',
             'route' => 'invoices.index',
@@ -276,7 +283,7 @@ class MenuSeeder extends Seeder
         ]);
 
         // Subscription Parent
-        $subParent = Menu::create([
+        $subParent = $this->createMenu([
             'name' => 'Subscription Plan',
             'icon' => 'bi bi-credit-card',
             'role' => 'user',
@@ -284,34 +291,36 @@ class MenuSeeder extends Seeder
             'section' => 'main'
         ]);
 
-        // Subscription Submenus
-        $subscriptionSubmenus = [
-            [
-                'name' => 'Upgrade Plan',
-                'icon' => 'bi bi-arrow-up-circle',
-                'route' => 'subscription.upgrade',
-                'role' => 'user',
-                'parent_id' => $subParent->id,
-                'order' => 1,
-                'section' => 'submenu'
-            ],
-            [
-                'name' => 'Payment History',
-                'icon' => 'bi bi-clock-history',
-                'route' => 'subscription.history',
-                'role' => 'user',
-                'parent_id' => $subParent->id,
-                'order' => 2,
-                'section' => 'submenu'
-            ]
-        ];
+        if ($subParent) {
+            // Subscription Submenus
+            $subscriptionSubmenus = [
+                [
+                    'name' => 'Upgrade Plan',
+                    'icon' => 'bi bi-arrow-up-circle',
+                    'route' => 'subscription.upgrade',
+                    'role' => 'user',
+                    'parent_id' => $subParent->id,
+                    'order' => 1,
+                    'section' => 'submenu'
+                ],
+                [
+                    'name' => 'Payment History',
+                    'icon' => 'bi bi-clock-history',
+                    'route' => 'subscription.history',
+                    'role' => 'user',
+                    'parent_id' => $subParent->id,
+                    'order' => 2,
+                    'section' => 'submenu'
+                ]
+            ];
 
-        foreach ($subscriptionSubmenus as $submenu) {
-            Menu::create($submenu);
+            foreach ($subscriptionSubmenus as $submenuData) {
+                $this->createMenu($submenuData);
+            }
         }
 
         // User Reports Header
-        Menu::create([
+        $this->createMenu([
             'name' => 'REPORTS',
             'header_text' => 'REPORTS',
             'role' => 'user',
@@ -320,7 +329,7 @@ class MenuSeeder extends Seeder
         ]);
 
         // User Reports Parent
-        $userReportsParent = Menu::create([
+        $userReportsParent = $this->createMenu([
             'name' => 'Reports',
             'icon' => 'bi bi-bar-chart',
             'role' => 'user',
@@ -328,34 +337,36 @@ class MenuSeeder extends Seeder
             'section' => 'main'
         ]);
 
-        // User Reports Submenus
-        $userReportsSubmenus = [
-            [
-                'name' => 'Usage Stats',
-                'icon' => 'bi bi-pie-chart',
-                'route' => 'reports.usage',
-                'role' => 'user',
-                'parent_id' => $userReportsParent->id,
-                'order' => 1,
-                'section' => 'submenu'
-            ],
-            [
-                'name' => 'Activity Logs',
-                'icon' => 'bi bi-clock-history',
-                'route' => 'reports.activity',
-                'role' => 'user',
-                'parent_id' => $userReportsParent->id,
-                'order' => 2,
-                'section' => 'submenu'
-            ]
-        ];
+        if ($userReportsParent) {
+            // User Reports Submenus
+            $userReportsSubmenus = [
+                [
+                    'name' => 'Usage Stats',
+                    'icon' => 'bi bi-pie-chart',
+                    'route' => 'reports.usage',
+                    'role' => 'user',
+                    'parent_id' => $userReportsParent->id,
+                    'order' => 1,
+                    'section' => 'submenu'
+                ],
+                [
+                    'name' => 'Activity Logs',
+                    'icon' => 'bi bi-clock-history',
+                    'route' => 'reports.activity',
+                    'role' => 'user',
+                    'parent_id' => $userReportsParent->id,
+                    'order' => 2,
+                    'section' => 'submenu'
+                ]
+            ];
 
-        foreach ($userReportsSubmenus as $submenu) {
-            Menu::create($submenu);
+            foreach ($userReportsSubmenus as $submenuData) {
+                $this->createMenu($submenuData);
+            }
         }
 
         // User Settings Header
-        Menu::create([
+        $this->createMenu([
             'name' => 'SETTINGS',
             'header_text' => 'SETTINGS',
             'role' => 'user',
@@ -364,7 +375,7 @@ class MenuSeeder extends Seeder
         ]);
 
         // User Settings Parent
-        $userSettingsParent = Menu::create([
+        $userSettingsParent = $this->createMenu([
             'name' => 'Settings',
             'icon' => 'bi bi-gear',
             'role' => 'user',
@@ -372,30 +383,60 @@ class MenuSeeder extends Seeder
             'section' => 'main'
         ]);
 
-        // User Settings Submenus
-        $userSettingsSubmenus = [
-            [
-                'name' => 'Profile Settings',
-                'icon' => 'bi bi-person',
-                'route' => 'settings.profile',
-                'role' => 'user',
-                'parent_id' => $userSettingsParent->id,
-                'order' => 1,
-                'section' => 'submenu'
-            ],
-            [
-                'name' => 'Notifications',
-                'icon' => 'bi bi-bell',
-                'route' => 'settings.notifications',
-                'role' => 'user',
-                'parent_id' => $userSettingsParent->id,
-                'order' => 2,
-                'section' => 'submenu'
-            ]
-        ];
+        if ($userSettingsParent) {
+            // User Settings Submenus
+            $userSettingsSubmenus = [
+                [
+                    'name' => 'Profile Settings',
+                    'icon' => 'bi bi-person',
+                    'route' => 'settings.profile',
+                    'role' => 'user',
+                    'parent_id' => $userSettingsParent->id,
+                    'order' => 1,
+                    'section' => 'submenu'
+                ],
+                [
+                    'name' => 'Notifications',
+                    'icon' => 'bi bi-bell',
+                    'route' => 'settings.notifications',
+                    'role' => 'user',
+                    'parent_id' => $userSettingsParent->id,
+                    'order' => 2,
+                    'section' => 'submenu'
+                ]
+            ];
 
-        foreach ($userSettingsSubmenus as $submenu) {
-            Menu::create($submenu);
+            foreach ($userSettingsSubmenus as $submenuData) {
+                $this->createMenu($submenuData);
+            }
         }
+        
+        $this->command->info('Menus seeded successfully!');
+    }
+    
+    /**
+     * Create menu with route existence check
+     */
+    private function createMenu(array $data)
+    {
+        // Check if route exists (if route is provided)
+        if (isset($data['route']) && $data['route'] && !Route::has($data['route'])) {
+            $this->command->warn("Route [{$data['route']}] does not exist. Menu [{$data['name']}] created without route.");
+            // Still create but without route
+            unset($data['route']);
+        }
+        
+        // Check if menu already exists
+        $existingMenu = Menu::where('name', $data['name'])
+            ->where('role', $data['role'])
+            ->where('parent_id', $data['parent_id'] ?? null)
+            ->first();
+            
+        if ($existingMenu) {
+            $this->command->warn("Menu [{$data['name']}] already exists. Skipping...");
+            return $existingMenu;
+        }
+        
+        return Menu::create($data);
     }
 }

@@ -38,11 +38,8 @@
                     }) ? 'mm-active' : '' }}">
                         <a class="has-arrow" href="#" aria-expanded="false">
                             @if($menu->icon)
-                                @if(strpos($menu->icon, 'bi-') === 0)
-                                    <i class="bi {{ $menu->icon }}" style="font-size: 26px;"></i>
-                                @else
-                                    <img src="{{ asset('assets/img/menu-icon/'.$menu->icon) }}" alt="{{ $menu->name }}">
-                                @endif
+                                <i class="bi {{ $menu->icon }}" style="font-size: 26px;"></i>
+                             
                             @endif
                             <span>{{ $menu->name }}</span>
                         </a>
@@ -67,11 +64,8 @@
                     <li class="{{ $currentRoute === $menu->route ? 'mm-active' : '' }}">
                         <a href="{{ $menu->getUrlAttribute() }}">
                             @if($menu->icon)
-                                @if(strpos($menu->icon, 'bi-') === 0)
-                                    <i class="bi {{ $menu->icon }}" style="font-size: 26px;"></i>
-                                @else
-                                    <img src="{{ asset('assets/img/menu-icon/'.$menu->icon) }}" alt="{{ $menu->name }}">
-                                @endif
+ 
+                                    <i class="bi {{ $menu->icon }}"></i>
                             @endif
                             <span>{{ $menu->name }}</span>
                         </a>

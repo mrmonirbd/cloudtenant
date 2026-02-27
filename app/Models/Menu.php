@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Route;
 
 class Menu extends Model
 {
@@ -14,39 +15,53 @@ class Menu extends Model
         'parent_id', 'order', 'section', 'header_text', 'is_active'
     ];
 
-    // Relationship for submenus
+    // Submenus
     public function children()
     {
-        return $this->hasMany(Menu::class, 'parent_id')->orderBy('order');
+        return $this->hasMany(Menu::class, 'parent_id')
+                    ->active()
+                    ->orderBy('order');
     }
 
-    // Parent menu
+    // Parent
     public function parent()
     {
         return $this->belongsTo(Menu::class, 'parent_id');
     }
 
-    // Scope for active menus
+    // Active menus
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
     }
 
-    // Scope by role
+    // Role filter
     public function scopeByRole($query, $role)
     {
-        return $query->where(function($q) use ($role) {
-            $q->where('role', $role)
-              ->orWhere('role', 'both');
-        });
+        return $query->whereIn('role', [$role, 'both']);
     }
 
-    // Get menu URL
-    public function getUrlAttribute()
+    // Only headers
+    public function scopeHeaders($query)
     {
-        if ($this->route) {
-            return route($this->route);
-        }
-        return $this->attributes['url'] ?? '#';
+        return $query->where('section', 'header')->active()->orderBy('order');
     }
+
+    // Get URL
+    // Get menu URL safely
+public function getUrlAttribute()
+{
+    if ($this->route) {
+        if (Route::has($this->route)) {
+            try {
+                return route($this->route);
+            } catch (\Exception $e) {
+                \Log::error("Route error for {$this->name}: " . $e->getMessage());
+                return '#';
+            }
+        }
+        return '#';
+    }
+    return $this->attributes['url'] ?? '#';
+}
 }

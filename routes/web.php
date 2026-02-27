@@ -59,7 +59,7 @@ Route::middleware(['auth', 'user.active'])->group(function () {
         Route::post('/bulk-delete', 'bulkDelete')->name('bulk-delete');
         
         // CRUD Operations
-        Route::get('/', 'index')->name('index');
+        Route::get('/team', 'index')->name('users.index');
         Route::get('/create', 'create')->name('create');
         Route::post('/', 'store')->name('store');
         Route::get('/{user}', 'show')->name('show');

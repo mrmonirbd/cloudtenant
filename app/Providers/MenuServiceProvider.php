@@ -19,7 +19,7 @@ class MenuServiceProvider extends ServiceProvider
     {
         try {
             // Using view composer to share menus with sidebar
-            View::composer('partials.sidebar', function ($view) {
+            View::composer('partials.sidebara', function ($view) {
                 
                 // Get menus for authenticated user
                 if (auth()->check()) {
