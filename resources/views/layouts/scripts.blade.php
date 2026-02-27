@@ -1,7 +1,8 @@
 
 
 <!-- jquery slim -->
-<script src="{{ asset('assets/js/jquery1-3.4.1.min.js') }}"></script>
+{{-- <script src="{{ asset('assets/js/jquery1-3.4.1.min.js') }}"></script> --}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <!-- popper js -->
 <script src="{{ asset('assets/js/popper1.min.js') }}"></script>
 <!-- bootstrap js -->
@@ -60,8 +61,9 @@
 <script src="{{ asset('assets/vendors/apex_chart/apex_chart_list.js') }}"></script>
 
 <!-- external -->
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v67327c56f0bb4ef8b305cae61679db8f1769101564043"
+{{-- <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v67327c56f0bb4ef8b305cae61679db8f1769101564043"
     integrity="sha512-rdcWY47ByXd76cbCFzznIcEaCN71jqkWBBqlwhF1SY7KubdLKZiEGeP7AyieKZlGP9hbY/MhGrwXzJC/HulNyg=="
     data-cf-beacon='{"version":"2024.11.0","token":"a6117f2172474edeb039d2a90d541d53","r":1}' crossorigin="anonymous">
-</script>
+</script> --}}
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
