@@ -20,6 +20,10 @@
 
         </li>
         <li class="">
+            <a  href="{{ route('users.index') }}"><i class="bi bi-people" style="font-size: 26px;"></i>Users</a>
+
+        </li>
+        <li class="">
           <a   class="has-arrow" href="#" aria-expanded="false">
             <img src="{{ asset('assets')}}/img/menu-icon/2.svg" alt="">
             <span>Pages</span>
