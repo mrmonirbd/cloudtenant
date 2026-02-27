@@ -94,7 +94,7 @@
                                 <option value="active">Active</option>
                                 <option value="inactive">Inactive</option>
                                 <option value="approved">Approved</option>
-                                <option value="rejected">Rejected</option>
+                                {{-- <option value="rejected">Rejected</option> --}}
                             </select>
                         </div>
 

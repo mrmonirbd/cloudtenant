@@ -28,7 +28,7 @@ class AuthenticatedSessionController extends Controller
 
         $user = Auth::user();
 
-        if ($user->status !== 'approved') {
+        if ($user->status !== 'active') {
             Auth::logout(); 
             $request->session()->invalidate();
             $request->session()->regenerateToken();
