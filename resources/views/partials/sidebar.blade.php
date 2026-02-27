@@ -14,19 +14,19 @@
         @endphp
 
         {{-- Dashboard Menu (Static) --}}
-        <li class="{{ request()->routeIs('dashboard') ? 'mm-active' : '' }}">
+        {{-- <li class="{{ request()->routeIs('dashboard') ? 'mm-active' : '' }}">
             <a href="{{ route('dashboard') }}">
                 <img src="{{ asset('assets/img/menu-icon/dashboard.svg') }}" alt="Dashboard">
                 <span>Dashboard</span>
             </a>
-        </li>
+        </li> --}}
 
         {{-- Display Headers if any --}}
-        @if(isset($menuHeaders) && $menuHeaders->count() > 0)
+        {{-- @if(isset($menuHeaders) && $menuHeaders->count() > 0)
             @foreach($menuHeaders as $header)
                 <li class="menu-header">{{ $header->header_text }}</li>
             @endforeach
-        @endif
+        @endif --}}
 
         {{-- Dynamic Menus from Database --}}
         @if(isset($dynamicMenus) && $dynamicMenus->count() > 0)
@@ -56,7 +56,7 @@
                                                 <i class="bi {{ $child->icon }}"></i>
                                             @endif
                                         @endif
-                                        {{ $child->name }}
+                                        {{ $child->name }} 
                                     </a>
                                 </li>
                             @endforeach
@@ -80,14 +80,14 @@
             @endforeach
         @else
             {{-- Fallback Menus if database is empty --}}
-            @if(auth()->user() && auth()->user()->role === 'admin')
+            {{-- @if(auth()->user() && auth()->user()->role === 'admin')
             <li class="{{ request()->routeIs('users.index') ? 'mm-active' : '' }}">
                 <a href="{{ route('users.index') }}">
                     <i class="bi bi-people" style="font-size: 26px;"></i>
                     <span>Users</span>
                 </a>
             </li>
-            @endif
+            @endif --}}
         @endif
 
         {{-- Logout Menu --}}
