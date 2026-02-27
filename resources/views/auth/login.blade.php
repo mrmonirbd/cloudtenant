@@ -52,116 +52,102 @@
 </div> --}}
 
 @push('scripts')
-
-   <!-- Include Toastr CSS & JS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
-<script>
-$(document).ready(function() {
-    $('#loginForm').on('submit', function(e) {
-        e.preventDefault();
-        
-        var form = $(this);
-        var submitBtn = form.find('button[type="submit"]');
-        submitBtn.prop('disabled', true).text('Processing...');
-        
-        // প্রথমে CSRF টোকেন রিফ্রেশ করুন
-        refreshCsrfToken().then(function(newToken) {
-            // নতুন টোকেন দিয়ে লগইন রিকোয়েস্ট পাঠান
-            return submitLoginForm(newToken);
-        }).then(function(response) {
-            // সফল লগইন
-            toastr.success('Login successful! Redirecting...');
-            setTimeout(function() {
-                window.location.href = response.redirect;
-            }, 1000);
-        }).catch(function(xhr) {
-            // এরর হ্যান্ডলিং
-            submitBtn.prop('disabled', false).text('Login');
-            handleLoginError(xhr);
-        });
-    });
-    
-    // CSRF টোকেন রিফ্রেশ ফাংশন
-    function refreshCsrfToken() {
-        return new Promise(function(resolve, reject) {
-            $.ajax({
-                url: '/csrf-token-refresh', // নতুন রুট
-                method: 'GET',
-                success: function(response) {
-                    // মেটা ট্যাগ আপডেট করুন
-                    $('meta[name="csrf-token"]').attr('content', response.csrf_token);
-                    
-                    // Ajax সেটআপ আপডেট করুন
-                    $.ajaxSetup({
-                        headers: {
-                            'X-CSRF-TOKEN': response.csrf_token
+    <script>
+        $(document).ready(function() {
+            $('#loginForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                var form = $(this);
+                var submitBtn = form.find('button[type="submit"]');
+                submitBtn.prop('disabled', true).text('Processing...');
+                
+                refreshCsrfToken().then(function(newToken) {
+                    return submitLoginForm(newToken);
+                }).then(function(response) {
+                    toastr.success('Login successful! Redirecting...');
+                    setTimeout(function() {
+                        window.location.href = response.redirect;
+                    }, 1000);
+                }).catch(function(xhr) {
+                    submitBtn.prop('disabled', false).text('Login');
+                    handleLoginError(xhr);
+                });
+            });
+            
+            function refreshCsrfToken() {
+                return new Promise(function(resolve, reject) {
+                    $.ajax({
+                        url: '/csrf-token-refresh', 
+                        method: 'GET',
+                        success: function(response) {
+                            $('meta[name="csrf-token"]').attr('content', response.csrf_token);
+                            
+                            $.ajaxSetup({
+                                headers: {
+                                    'X-CSRF-TOKEN': response.csrf_token
+                                }
+                            });
+                            
+                            resolve(response.csrf_token);
+                        },
+                        error: function(xhr) {
+                            reject(xhr);
                         }
                     });
-                    
-                    resolve(response.csrf_token);
-                },
-                error: function(xhr) {
-                    reject(xhr);
-                }
-            });
-        });
-    }
-    
-    // লগইন ফর্ম সাবমিট ফাংশন
-    function submitLoginForm(csrfToken) {
-        return new Promise(function(resolve, reject) {
-            $.ajax({
-                url: '{{ route("login") }}',
-                method: 'POST',
-                data: {
-                    email: $('#userEmail').val(),
-                    password: $('#userPassword').val()
-                },
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken
-                },
-                success: function(response) {
-                    resolve(response);
-                },
-                error: function(xhr) {
-                    reject(xhr);
-                }
-            });
-        });
-    }
-    
-    // এরর হ্যান্ডলিং ফাংশন
-    function handleLoginError(xhr) {
-        let errorMessage = 'Login failed. Please check your credentials.';
-        
-        if (xhr.status === 419) {
-            errorMessage = 'Session expired. Refreshing token...';
-            toastr.warning(errorMessage);
-            
-            setTimeout(function() {
-                $('#loginForm').submit();
-            }, 1000);
-            return;
-        }
-        
-        if (xhr.responseJSON) {
-            if (xhr.responseJSON.error) {
-                errorMessage = xhr.responseJSON.error;
-            } else if (xhr.responseJSON.message) {
-                errorMessage = xhr.responseJSON.message;
-            } else if (xhr.responseJSON.errors) {
-                const errors = xhr.responseJSON.errors;
-                errorMessage = errors.email ? errors.email[0] : 
-                             (errors.password ? errors.password[0] : errorMessage);
+                });
             }
-        }
-        
-        toastr.error(errorMessage);
-    }
-});
-</script>
+            
+            function submitLoginForm(csrfToken) {
+                return new Promise(function(resolve, reject) {
+                    $.ajax({
+                        url: '{{ route("login") }}',
+                        method: 'POST',
+                        data: {
+                            email: $('#userEmail').val(),
+                            password: $('#userPassword').val()
+                        },
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken
+                        },
+                        success: function(response) {
+                            resolve(response);
+                        },
+                        error: function(xhr) {
+                            reject(xhr);
+                        }
+                    });
+                });
+            }
+            
+            function handleLoginError(xhr) {
+                let errorMessage = 'Login failed. Please check your credentials.';
+                
+                if (xhr.status === 419) {
+                    errorMessage = 'Session expired. Refreshing token...';
+                    toastr.warning(errorMessage);
+                    
+                    setTimeout(function() {
+                        $('#loginForm').submit();
+                    }, 1000);
+                    return;
+                }
+                
+                if (xhr.responseJSON) {
+                    if (xhr.responseJSON.error) {
+                        errorMessage = xhr.responseJSON.error;
+                    } else if (xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    } else if (xhr.responseJSON.errors) {
+                        const errors = xhr.responseJSON.errors;
+                        errorMessage = errors.email ? errors.email[0] : 
+                                    (errors.password ? errors.password[0] : errorMessage);
+                    }
+                }
+                
+                toastr.error(errorMessage);
+            }
+        });
+    </script>
     
 
     
