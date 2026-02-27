@@ -22,15 +22,29 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginRequest $request) // no type hint
     {
         $request->authenticate();
 
-        $request->session()->regenerate();
+        $user = Auth::user();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        if ($user->status !== 'approved') {
+            Auth::logout(); 
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return response()->json([
+                'error' => 'Your account is not approved yet.',
+            ], 403);
+        }
+
+    $request->session()->regenerate();
+
+    return response()->json([
+        'success' => true,
+        'redirect' => route('dashboard')
+    ]);
     }
-
     /**
      * Destroy an authenticated session.
      */

@@ -17,4 +17,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+
+Route::get('/csrf-token-refresh', function() {
+    return response()->json([
+        'csrf_token' => csrf_token(),
+        'message' => 'Token refreshed successfully'
+    ]);
+})->name('csrf.refresh');
 require __DIR__.'/auth.php';
