@@ -12,13 +12,11 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         
-        // Middleware aliases - একবারেই সঠিকভাবে define করুন
         $middleware->alias([
-            // User Status Middleware
             'user.active' => \App\Http\Middleware\CheckUserStatus::class,
             'check.status' => \App\Http\Middleware\CheckUserStatus::class,
+            'role' => \App\Http\Middleware\RoleMiddleware::class,
             
-            // Role Middleware
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'editor' => \App\Http\Middleware\EditorMiddleware::class,
             
@@ -27,9 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'user.status' => \App\Http\Middleware\UserStatusMiddleware::class,
         ]);
         
-        // Web middleware group এ append করুন (optional)
         $middleware->web(append: [
-            // 'user.active', // সব web route এ apply করতে চাইলে
         ]);
         
     })
