@@ -46,6 +46,50 @@
     </body>
     @include('layouts.scripts')
 
+    <script>
+        $(document).ready(function() {
+    
+    // Submenu toggle
+    $('.has-arrow').on('click', function(e) {
+        e.preventDefault();
+        
+        var parent = $(this).parent('li');
+        
+        // Close other submenus
+        $('#sidebar_menu li.mm-dropdown').not(parent).removeClass('mm-active').find('ul').slideUp();
+        
+        // Toggle current submenu
+        parent.toggleClass('mm-active');
+        parent.find('ul').slideToggle();
+    });
+    
+    // Active menu based on URL
+    var currentUrl = window.location.href;
+    
+    $('#sidebar_menu a').each(function() {
+        var linkUrl = $(this).attr('href');
+        
+        if (linkUrl && currentUrl.indexOf(linkUrl) !== -1 && linkUrl !== '#') {
+            $(this).addClass('active');
+            $(this).parents('li').addClass('mm-active');
+            $(this).parents('ul').css('display', 'block');
+        }
+    });
+    
+    // Mobile menu toggle
+    $('.sidebar_close_icon').on('click', function() {
+        $('.sidebar').toggleClass('open');
+    });
+    
+    // Logout confirmation
+    $('.logout a').on('click', function(e) {
+        if (!confirm('Are you sure you want to logout?')) {
+            e.preventDefault();
+        }
+    });
+});
+    </script>
+
     @stack('scripts')
 
 </html>
