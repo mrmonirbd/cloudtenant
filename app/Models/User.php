@@ -112,4 +112,17 @@ class User extends Authenticatable
 
         return $displayNames[$this->role] ?? $this->role;
     }
+
+    public function menus()
+    {
+        return $this->belongsToMany(Menu::class, 'user_menu_permissions', 'user_id', 'menu_id');
+    }
+
+    public function hasMenuPermission($menuId)
+    {
+        return \DB::table('user_menu_permissions')
+        ->where('user_id', $this->id)
+        ->where('menu_id', $menuId)
+        ->exists();
+    }
 }

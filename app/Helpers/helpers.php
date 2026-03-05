@@ -33,9 +33,15 @@ if (!function_exists('buildMenu')) {
     /**
      * Build menu HTML
      */
-    function buildMenu($menus, $currentRoute = null)
+    function buildMenu($currentRoute = null)
     {
         $html = '';
+        $user = auth()->user();
+        if($user->role=='owner'){
+            $menus = Menu::whereNull('parent_id')->orderBy('order')->with('children')->get();
+        }else{  
+        $menus = $user->menus()->with('children')->get();
+        }
         $currentRoute = $currentRoute ?? request()->route()?->getName();
         
         foreach ($menus as $menu) {

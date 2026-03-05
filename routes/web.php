@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\dashboardController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\ProjectController;
@@ -30,6 +31,13 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified', 'user.active'])->name('dashboard');
 
+Route::middleware(['auth', 'user.active'])->controller(dashboardController::class)->group(function () {
+        Route::get('/dashboard', 'index')->name('dashboard');
+        Route::get('/history', 'history')->name('history');
+        Route::post('/cancel', 'cancel')->name('cancel');
+        Route::post('/resume', 'resume')->name('resume');
+    });
+
 // Authenticated Routes (Active User Only)
 Route::middleware(['auth', 'user.active'])->group(function () {
     
@@ -41,7 +49,7 @@ Route::middleware(['auth', 'user.active'])->group(function () {
     });
     
     // ==================== USER MANAGEMENT ROUTES ====================
-Route::prefix('users')->name('users.')->controller(UserController::class)->group(function () {
+Route::prefix('users')->middleware(['auth', 'user.active','menu.permission'])->name('users.')->controller(UserController::class)->group(function () {
     // Export/Import
     Route::get('/export/csv', 'exportCsv')->name('export.csv');        // users.export.csv
     Route::get('/export/excel', 'exportExcel')->name('export.excel');  // users.export.excel

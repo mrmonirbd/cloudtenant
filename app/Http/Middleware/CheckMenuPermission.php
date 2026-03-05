@@ -19,7 +19,7 @@ class CheckMenuPermission
         if ($routeName) {
             $menu = Menu::where('route', $routeName)->first();
             
-            if ($menu && !auth()->user()->hasMenuPermission($menu->id, $permission)) {
+            if ($menu && !auth()->user()->hasMenuPermission($menu->id)) {
                 abort(403, 'You do not have permission to access this page.');
             }
         }

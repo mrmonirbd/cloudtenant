@@ -61,7 +61,7 @@ class MenuHelper
     /**
      * Build menu HTML
      */
-    public static function buildMenu($menus, $currentRoute = null)
+    function buildMenu($menus, $currentRoute = null)
     {
         if ($menus->isEmpty()) {
             return '<li class="text-center text-muted py-3">No menus available</li>';
@@ -85,7 +85,7 @@ class MenuHelper
                 
                 foreach ($menu->children as $child) {
                     $childActive = $child->route === $currentRoute ? 'active' : '';
-                    $url = self::getMenuUrl($child);
+                    $url = getMenuUrl($child);
                     
                     $html .= '<li class="' . $childActive . '">';
                     $html .= '<a href="' . $url . '">';
@@ -99,7 +99,7 @@ class MenuHelper
                 $html .= '</li>';
             } else {
                 $active = $menu->route === $currentRoute ? 'mm-active' : '';
-                $url = self::getMenuUrl($menu);
+                $url = getMenuUrl($menu);
                 
                 $html .= '<li class="' . $active . '">';
                 $html .= '<a href="' . $url . '">';
@@ -116,16 +116,9 @@ class MenuHelper
     /**
      * Get menu URL safely
      */
-    public static function getMenuUrl($menu)
+    function getMenuUrl($menu)
     {
-        if ($menu->route && \Route::has($menu->route)) {
-            try {
-                return route($menu->route);
-            } catch (\Exception $e) {
-                return '#';
-            }
-        }
-        return $menu->url ?? '#';
+        return url($menu->route);
     }
 
     /**
