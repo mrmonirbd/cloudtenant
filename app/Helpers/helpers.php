@@ -33,59 +33,72 @@ if (!function_exists('buildMenu')) {
     /**
      * Build menu HTML
      */
-    function buildMenu($currentRoute = null)
-    {
-        $html = '';
-        $user = auth()->user();
-        if($user->role=='owner'){
-            $menus = Menu::whereNull('parent_id')->orderBy('order')->with('children')->get();
-        }else{  
+   function buildMenu($currentRoute = null)
+{
+    $html = '';
+    $user = auth()->user();
+
+    // Fetch menus based on role
+    if ($user->role === 'owner') {
+        // Fetch all menus
+        $menus = Menu::whereNull('parent_id')->orderBy('order')->with('children')->get();
+    } else {
+        // Fetch assigned menus for non-owner users
         $menus = $user->menus()->with('children')->get();
-        }
-        $currentRoute = $currentRoute ?? request()->route()?->getName();
-        
-        foreach ($menus as $menu) {
-            if ($menu->children->count() > 0) {
-                $active = $menu->children->contains(function($child) use ($currentRoute) {
-                    return $child->route === $currentRoute;
-                }) ? 'mm-active' : '';
+    }
+
+    // Set current route if not provided
+    $currentRoute = $currentRoute ?? request()->route()?->getName();
+
+    // Loop through each menu
+    foreach ($menus as $menu) {
+        // Check if the menu has children (submenus)
+        if ($menu->children->count() > 0) {
+            // Check if any child menu is active
+            $active = ($menu->route === $currentRoute || $menu->children->contains(function($child) use ($currentRoute) {
+                return $child->route === $currentRoute;
+            })) ? 'mm-active' : '';
+
+            // Build the parent menu (with submenus)
+            $html .= '<li class="mm-dropdown ' . $active . '">';
+            $html .= '<a class="has-arrow" href="#" aria-expanded="false">';
+            $html .= getMenuIcon($menu);
+            $html .= '<span>' . e($menu->name) . '</span>';
+            $html .= '</a>';
+            $html .= '<ul class="mm-collapse">';
+            
+            // Loop through child menus
+            foreach ($menu->children as $child) {
+                $childActive = $child->route === $currentRoute ? 'active' : '';
+                $url = getMenuUrl($child);
                 
-                $html .= '<li class="mm-dropdown ' . $active . '">';
-                $html .= '<a class="has-arrow" href="#" aria-expanded="false">';
-                $html .= getMenuIcon($menu);
-                $html .= '<span>' . e($menu->name) . '</span>';
-                $html .= '</a>';
-                $html .= '<ul class="mm-collapse">';
-                
-                foreach ($menu->children as $child) {
-                    $childActive = $child->route === $currentRoute ? 'active' : '';
-                    $url = getMenuUrl($child);
-                    
-                    $html .= '<li class="' . $childActive . '">';
-                    $html .= '<a href="' . $url . '">';
-                    $html .= getMenuIcon($child, true);
-                    $html .= e($child->name);
-                    $html .= '</a>';
-                    $html .= '</li>';
-                }
-                
-                $html .= '</ul>';
-                $html .= '</li>';
-            } else {
-                $active = $menu->route === $currentRoute ? 'mm-active' : '';
-                $url = getMenuUrl($menu);
-                
-                $html .= '<li class="' . $active . '">';
+                $html .= '<li class="' . $childActive . '">';
                 $html .= '<a href="' . $url . '">';
-                $html .= getMenuIcon($menu);
-                $html .= '<span>' . e($menu->name) . '</span>';
+                $html .= getMenuIcon($child, true);
+                $html .= e($child->name);
                 $html .= '</a>';
                 $html .= '</li>';
             }
+
+            // Close submenu
+            $html .= '</ul>';
+            $html .= '</li>';
+        } else {
+            // No children, just a simple menu item
+            $active = $menu->route === $currentRoute ? 'mm-active' : '';
+            $url = getMenuUrl($menu);
+
+            $html .= '<li class="' . $active . '">';
+            $html .= '<a href="' . $url . '">';
+            $html .= getMenuIcon($menu);
+            $html .= '<span>' . e($menu->name) . '</span>';
+            $html .= '</a>';
+            $html .= '</li>';
         }
-        
-        return $html;
     }
+
+    return $html;
+}
 }
 
 if (!function_exists('getMenuIcon')) {

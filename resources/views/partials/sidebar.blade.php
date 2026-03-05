@@ -9,7 +9,7 @@
     </div>
     
     <ul class="sidebar-menu">
-        {!! buildMenu(request()->route()?->getName()) !!}
+            {!! buildMenu(request()->route()?->getName()) !!}
     </ul>
 </nav>
 
