@@ -41,39 +41,38 @@ Route::middleware(['auth', 'user.active'])->group(function () {
     });
     
     // ==================== USER MANAGEMENT ROUTES ====================
-    Route::prefix('users')->name('users.')->controller(UserController::class)->group(function () {
-        // Export/Import
-        Route::get('/export/csv', 'exportCsv')->name('export.csv');
-        Route::get('/export/excel', 'exportExcel')->name('export.excel');
-        Route::post('/import', 'import')->name('import');
-        
-        // Search/Filter
-        Route::get('/search', 'search')->name('search');
-        Route::get('/filter/{status}', 'filterByStatus')->name('filter');
-        
-        // Email Check
-        Route::post('/check-email', 'checkEmail')->name('check-email');
-        
-        // Bulk Actions
-        Route::post('/bulk-approve', 'bulkApprove')->name('bulk-approve');
-        Route::post('/bulk-delete', 'bulkDelete')->name('bulk-delete');
-        
-        // CRUD Operations
-        Route::get('/team', 'index')->name('users.index');
-        Route::get('/create', 'create')->name('create');
-        Route::post('/', 'store')->name('store');
-        Route::get('/{user}', 'show')->name('show');
-        Route::get('/{user}/edit', 'edit')->name('edit');
-        Route::put('/{user}', 'update')->name('update');
-        Route::patch('/{user}', 'update');
-        Route::delete('/{user}', 'destroy')->name('destroy');
-        
-        // Status Operations
-        Route::patch('/{user}/approve', 'approve')->name('approve');
-        Route::patch('/{user}/reject', 'reject')->name('reject');
-        Route::patch('/{user}/status', 'updateStatus')->name('status');
-    });
+Route::prefix('users')->name('users.')->controller(UserController::class)->group(function () {
+    // Export/Import
+    Route::get('/export/csv', 'exportCsv')->name('export.csv');        // users.export.csv
+    Route::get('/export/excel', 'exportExcel')->name('export.excel');  // users.export.excel
+    Route::post('/import', 'import')->name('import');                  // users.import
     
+    // Search/Filter
+    Route::get('/search', 'search')->name('search');                    // users.search
+    Route::get('/filter/{status}', 'filterByStatus')->name('filter');   // users.filter
+    
+    // Email Check
+    Route::post('/check-email', 'checkEmail')->name('check-email');     // users.check-email
+    
+    // Bulk Actions
+    Route::post('/bulk-approve', 'bulkApprove')->name('bulk-approve');  // users.bulk-approve
+    Route::post('/bulk-delete', 'bulkDelete')->name('bulk-delete');     // users.bulk-delete
+    
+    // CRUD Operations
+    Route::get('/', 'index')->name('index');                // users.index (index page)
+    Route::get('/create', 'create')->name('create');        // users.create
+    Route::post('/', 'store')->name('store');               // users.store (POST)
+    Route::get('/{user}', 'index')->name('show');            // users.show
+    Route::get('/{user}/edit', 'edit')->name('edit');       // users.edit
+    Route::put('/{user}', 'update')->name('update');        // users.update
+    Route::patch('/{user}', 'update');                      // users.update (PATCH)
+    Route::delete('/{user}', 'destroy')->name('destroy');   // users.destroy
+    
+    // Status Operations
+    Route::patch('/{user}/approve', 'approve')->name('approve');    // users.approve
+    Route::patch('/{user}/reject', 'reject')->name('reject');       // users.reject
+    Route::patch('/{user}/status', 'updateStatus')->name('status'); // users.status
+});
     // ==================== COMPANY ROUTES ====================
     Route::resource('companies', CompanyController::class);
     

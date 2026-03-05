@@ -23,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
             // Other middleware
             'role' => \App\Http\Middleware\RoleMiddleware::class,
             'user.status' => \App\Http\Middleware\UserStatusMiddleware::class,
+            'menu.permission' => \App\Http\Middleware\CheckMenuPermission::class,
         ]);
         
         $middleware->web(append: [

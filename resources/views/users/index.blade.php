@@ -8,7 +8,7 @@
             <div class="box_right d-flex lms_block">
                 <div class="serach_field_2">
                     <div class="search_inner">
-                        <form action="{{ route('users.index') }}" method="GET">
+                        <form  method="GET">
                             <div class="search_field">
                                 <input type="text" name="search" placeholder="Search by name or email..." value="{{ request('search') }}">
                             </div>

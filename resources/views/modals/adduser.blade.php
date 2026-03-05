@@ -9,7 +9,7 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             
-            <form id="createUserForm" method="POST" action="{{ route('users.store') }}">
+            <form id="createUserForm" method="POST" >
                 @csrf
                 
                 <div class="modal-body">
@@ -276,7 +276,6 @@ $(document).ready(function() {
     // Form Submission
     $('#createUserForm').on('submit', function(e) {
         e.preventDefault();
-        
         // Clear previous errors
         $('.is-invalid').removeClass('is-invalid');
         $('.invalid-feedback').html('');

@@ -4,28 +4,57 @@ namespace App\Helpers;
 
 use App\Models\Menu;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class MenuHelper
 {
     /**
-     * Get menus by role with caching
+     * Get menus for specific user based on permissions
      */
-    public static function getMenusByRole($role = null)
+    public static function getUserMenus($userId)
     {
-        $role = $role ?? auth()->user()->role ?? 'guest';
-        
-        return Cache::remember("menus_role_{$role}", 3600, function () use ($role) {
+        // Check if table exists first
+        if (!Schema::hasTable('user_menu_permissions')) {
+            // If table doesn't exist, return all active menus (for development)
             return Menu::active()
-                ->byRole($role)
-                ->parents()
+                ->whereNull('parent_id')  // parents() এর পরিবর্তে whereNull
                 ->orderBy('order')
-                ->with(['children' => function($query) use ($role) {
-                    $query->active()
-                        ->byRole($role)
-                        ->orderBy('order');
+                ->with(['children' => function($query) {
+                    $query->active()->orderBy('order');
                 }])
                 ->get();
+        }
+        
+        return Cache::remember("user_menus_{$userId}", 3600, function () use ($userId) {
+            try {
+                $menuIds = DB::table('user_menu_permissions')
+                    ->where('user_id', $userId)
+                    ->where('can_view', true)
+                    ->pluck('menu_id')
+                    ->toArray();
+
+                // If no permissions found, return empty collection
+                if (empty($menuIds)) {
+                    return collect([]);
+                }
+
+                return Menu::active()
+                    ->whereNull('parent_id')  // parents() এর পরিবর্তে whereNull
+                    ->whereIn('id', $menuIds)
+                    ->orderBy('order')
+                    ->with(['children' => function($query) use ($menuIds) {
+                        $query->active()
+                            ->whereIn('id', $menuIds)
+                            ->orderBy('order');
+                    }])
+                    ->get();
+                    
+            } catch (\Exception $e) {
+                // Log error and return empty collection
+                \Log::error('MenuHelper error: ' . $e->getMessage());
+                return collect([]);
+            }
         });
     }
 
@@ -34,6 +63,10 @@ class MenuHelper
      */
     public static function buildMenu($menus, $currentRoute = null)
     {
+        if ($menus->isEmpty()) {
+            return '<li class="text-center text-muted py-3">No menus available</li>';
+        }
+        
         $html = '';
         $currentRoute = $currentRoute ?? request()->route()?->getName();
         
@@ -45,8 +78,8 @@ class MenuHelper
                 
                 $html .= '<li class="mm-dropdown ' . $active . '">';
                 $html .= '<a class="has-arrow" href="#" aria-expanded="false">';
-                $html .= '<i class="' . $menu->icon . '" style="font-size: 26px;"></i>';
-                $html .= '<span>' . $menu->name . '</span>';
+                $html .= '<i class="' . e($menu->icon) . '" style="font-size: 26px;"></i>';
+                $html .= '<span>' . e($menu->name) . '</span>';
                 $html .= '</a>';
                 $html .= '<ul class="mm-collapse">';
                 
@@ -56,8 +89,8 @@ class MenuHelper
                     
                     $html .= '<li class="' . $childActive . '">';
                     $html .= '<a href="' . $url . '">';
-                    $html .= '<i class="' . $child->icon . '"></i> ';
-                    $html .= $child->name;
+                    $html .= '<i class="' . e($child->icon) . '"></i> ';
+                    $html .= e($child->name);
                     $html .= '</a>';
                     $html .= '</li>';
                 }
@@ -70,8 +103,8 @@ class MenuHelper
                 
                 $html .= '<li class="' . $active . '">';
                 $html .= '<a href="' . $url . '">';
-                $html .= '<i class="' . $menu->icon . '" style="font-size: 26px;"></i>';
-                $html .= '<span>' . $menu->name . '</span>';
+                $html .= '<i class="' . e($menu->icon) . '" style="font-size: 26px;"></i>';
+                $html .= '<span>' . e($menu->name) . '</span>';
                 $html .= '</a>';
                 $html .= '</li>';
             }
@@ -85,14 +118,21 @@ class MenuHelper
      */
     public static function getMenuUrl($menu)
     {
-        if ($menu->route && Route::has($menu->route)) {
+        if ($menu->route && \Route::has($menu->route)) {
             try {
                 return route($menu->route);
             } catch (\Exception $e) {
                 return '#';
             }
         }
-        
         return $menu->url ?? '#';
+    }
+
+    /**
+     * Clear user menu cache
+     */
+    public static function clearUserCache($userId)
+    {
+        Cache::forget("user_menus_{$userId}");
     }
 }

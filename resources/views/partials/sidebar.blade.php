@@ -1,7 +1,7 @@
 <nav class="sidebar">
     <div class="logo d-flex justify-content-between">
         <a href="{{ route('dashboard') }}">
-            <img src="{{ asset('assets/img/logo.png') }}" alt="{{ config('app.name') }}">
+            <img src="{{ asset('assets/img/logo.png') }}" alt="">
         </a>
         <div class="sidebar_close_icon d-lg-none">
             <i class="ti-close"></i>
@@ -10,31 +10,16 @@
     
     <ul id="sidebar_menu">
         @php
-            $currentRoute = request()->route() ? request()->route()->getName() : '';
-            $role = auth()->check() ? auth()->user()->role : 'guest';
-            $menus = getMenusByRole($role);
+            use App\Helpers\MenuHelper;
+            $currentRoute = request()->route()?->getName();
+            $userMenus = MenuHelper::getUserMenus(auth()->id());
         @endphp
 
-        {{-- Dashboard --}}
-        <li class="{{ $currentRoute === 'dashboard' ? 'mm-active' : '' }}">
-            <a href="{{ route('dashboard') }}">
-                <img src="{{ asset('assets/img/menu-icon/dashboard.svg') }}" alt="Dashboard">
-                <span>Dashboard</span>
-            </a>
-        </li>
-
-        {{-- Headers from menus --}}
-        @foreach($menus->where('section', 'header') as $header)
-            <li class="menu-header">{{ $header->header_text }}</li>
-        @endforeach
-
-        {{-- Main Menus --}}
-        @php
-            $mainMenus = $menus->where('section', 'main');
-        @endphp
-        
-        @if($mainMenus->count() > 0)
-            {!! buildMenu($mainMenus, $currentRoute) !!}
+        {{-- Dynamic Menus based on user permissions --}}
+        @if($userMenus->count() > 0)
+            {!! MenuHelper::buildMenu($userMenus, $currentRoute) !!}
+        @else
+            <li class="text-center text-muted py-3">No menus available</li>
         @endif
 
         {{-- Logout --}}
