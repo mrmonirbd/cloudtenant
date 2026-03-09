@@ -98,8 +98,16 @@
                                     <input type="text" class="form-control" id="department" name="department" value="{{ $user->department }}">
                                 </div>
                                 <div class="mb-3">
+                                     {{-- <div class="row mb-3">
+                                        <label class="form-label col-sm-3 col-form-label text-end f_w_500 f_s_15">Default</label>
+                                        <div class="col-xl-5 col-sm-9">
+                                        <div class="input-group common_date_picker">
+                                            <input class="datepicker-here  digits" type="text" data-language="en">
+                                        </div>
+                                        </div>
+                                    </div> --}}
                                     <label for="joining_date" class="form-label">Joining Date</label>
-                                    <input type="date" class="form-control" id="joining_date" name="joining_date" value="{{ $user->joining_date }}">
+                                    <input type="text" class="form-control datepicker-here" id="joining_date" name="joining_date" value="{{ $user->joining_date }}">
                                 </div>
                                 <div class="mb-3">
                                     <label for="current_address" class="form-label">Current Address</label>
