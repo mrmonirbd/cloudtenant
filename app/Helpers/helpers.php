@@ -33,6 +33,7 @@ if (!function_exists('getMenusByRole')) {
              $menus = menu::get();
         } else {
         $menus = auth()->user()->menus()->get();
+        dd($menus);
         }
         return $menus;
     }
