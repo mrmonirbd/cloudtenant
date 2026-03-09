@@ -33,7 +33,7 @@ if (!function_exists('getMenusByRole')) {
              $menus = menu::get();
         } else {
         $menus = auth()->user()->menus()->get();
-        dd($menus);
+        // dd($menus);
         }
         return $menus;
     }
@@ -44,7 +44,6 @@ if (!function_exists('getMenusByRole')) {
     {
         $html = '';
         $menus = auth()->user()->menus();
-        dd($menus);
 
         foreach ($menus as $menu) {
             if ($menu->section == 'header') {
