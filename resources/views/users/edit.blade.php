@@ -228,39 +228,59 @@
             <div class="tab-pane fade" id="permissions" role="tabpanel" aria-labelledby="permissions-tab">
                 <div class="card p-3">
                    <h5>Set Permissions for {{ $user->name }}</h5>
-                    <form action="" method="POST">
-                        @csrf
-                        @method('PUT')
+                  <form action="" method="POST">
+    @csrf
+    @method('PUT')
 
-                        <ul>
-                            @foreach(getmenu() as $menu)
-                            @php
-                               dd(auth()->user()->permissions);
-                            @endphp
+    <ul>
+        
+         @foreach(getmenu() as $menu)
+            @if($menu->section == 'header')
+                <li class="menu-header">{{ $menu->header_text }}</li>
+            @else
+                <li class="{{ $menu->children->count() > 0 ? 'has-submenu' : '' }}">
+                    <div>
+                        <input type="checkbox" name="permissions[]" value="{{ $menu->id }}"
+                            @if(in_array(auth()->user()->role, ['owner', 'superadmin']))
+                                checked
+                            @else
+                                {{ $user->permissions && $user->permissions->contains($menu->id) ? 'checked' : '' }}
+                            @endif
+                        >
+                        @if($menu->icon)
+                            <i class="{{ $menu->icon }}"></i>
+                        @endif
+                        <span>{{ $menu->name }}</span>
+                    </div>
+
+                    @if($menu->children->count() > 0)
+                        <ul style="margin-left: 20px;">
+                            @foreach($menu->children as $child)
                                 <li>
                                     <div>
-                                        <input type="checkbox" name="permissions[]" value="{{ $menu->id }}"
-                                            {{ $user->permissions->contains($menu->id) ? 'checked' : '' }}>
-                                        {{ $menu->name }}
+                                        <input type="checkbox" name="permissions[]" value="{{ $child->id }}"
+                                            @if(in_array(auth()->user()->role, ['owner', 'superadmin']))
+                                                checked
+                                            @else
+                                                {{ $user->permissions && $user->permissions->contains($child->id) ? 'checked' : '' }}
+                                            @endif
+                                        >
+                                        @if($child->icon)
+                                            <i class="{{ $child->icon }}"></i>
+                                        @endif
+                                        <span>{{ $child->name }}</span>
                                     </div>
-
-                                    @if($menu->children->count() > 0)
-                                        <ul style="margin-left: 20px;">
-                                            @foreach($menu->children as $child)
-                                                <li>
-                                                    <input type="checkbox" name="permissions[]" value="{{ $child->id }}"
-                                                        {{ $user->permissions->contains($child->id) ? 'checked' : '' }}>
-                                                    {{ $child->name }}
-                                                </li>
-                                            @endforeach
-                                        </ul>
-                                    @endif
                                 </li>
                             @endforeach
                         </ul>
+                    @endif
+                </li>
+            @endif
+        @endforeach
+    </ul>
 
-                        <button type="submit" class="btn btn-primary">Save Permissions</button>
-                    </form>
+    <button type="submit" class="btn btn-primary mt-3">Save Permissions</button>
+</form>
                 </div>
             </div>
         </div>

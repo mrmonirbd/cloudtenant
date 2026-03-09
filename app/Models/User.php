@@ -125,4 +125,9 @@ class User extends Authenticatable
         ->where('menu_id', $menuId)
         ->exists();
     }
+
+    public function permissions()
+{
+    return $this->belongsToMany(\App\Models\Menu::class, 'user_menu_permissions');
+}
 }

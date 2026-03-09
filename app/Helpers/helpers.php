@@ -38,7 +38,11 @@ if (!function_exists('getMenusByRole')) {
         return $menus;
     }
 
-
+function getMenuByUser($id)
+    {
+        $data = auth()->user()->menus()->where('menu_id', $id)->exists();
+        return $data;
+    }
 
  function renderMenu($menus)
     {
