@@ -68,27 +68,53 @@
 
                         <div class="row">
                             <!-- Left Column -->
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="name" class="form-label">Full Name</label>
-                                    <input type="text" class="form-control" id="name" name="name" value="{{ $user->name }}" required>
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="name" class="form-label">First Name</label>
+                                            <input type="text" class="form-control" id="name" name="name" value="{{ $user->name }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="name" class="form-label">Last Name</label>
+                                            <input type="text" class="form-control" id="name" name="name" value="{{ $user->name }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="email" class="form-label">Email</label>
+                                            <input type="email" class="form-control" id="email" name="email" value="{{ $user->email }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="phone" class="form-label">Phone</label>
+                                            <input type="text" class="form-control" id="phone" name="phone" value="{{ $user->phone }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                         <div class="mb-3">
+                                            <label for="employee_id" class="form-label">Employee ID</label>
+                                            <input type="text" class="form-control" id="employee_id" name="employee_id" value="{{ $user->employee_id }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                         <div class="mb-3">
+                                            <label for="designation" class="form-label">Designation</label>
+                                            <input type="text" class="form-control" id="designation" name="designation" value="{{ $user->designation }}">
+                                        </div>
+                                    </div>
+                                    {{-- <div class="col-md-6">
+
+                                    </div>
+                                    <div class="col-md-6">
+
+                                    </div> --}}
                                 </div>
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="email" name="email" value="{{ $user->email }}" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="phone" class="form-label">Phone</label>
-                                    <input type="text" class="form-control" id="phone" name="phone" value="{{ $user->phone }}">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="employee_id" class="form-label">Employee ID</label>
-                                    <input type="text" class="form-control" id="employee_id" name="employee_id" value="{{ $user->employee_id }}">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="designation" class="form-label">Designation</label>
-                                    <input type="text" class="form-control" id="designation" name="designation" value="{{ $user->designation }}">
-                                </div>
+                                     
+                                   
                             </div>
 
                             <!-- Right Column -->
