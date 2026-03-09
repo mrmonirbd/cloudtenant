@@ -233,7 +233,10 @@
     @method('PUT')
 
     <ul>
-        
+        @php
+            $user = auth()->user();
+        @endphp
+
          @foreach(getmenu() as $menu)
             @if($menu->section == 'header')
                 <li class="menu-header">{{ $menu->header_text }}</li>
