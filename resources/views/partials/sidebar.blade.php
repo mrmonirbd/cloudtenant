@@ -9,38 +9,38 @@
     </div>
     
     <ul id="sidebar_menu">
-    @foreach(getmenu() as $menu)
-        @if($menu->section == 'header')
-            <li class="menu-header">{{ $menu->header_text }}</li>
-        @else
-            <li class="{{ $menu->children->count() > 0 ? 'has-submenu' : '' }}">
-                <a href="{{ $menu->route ? route($menu->route) : '#' }}">
-                    @if($menu->icon)
-                        <i class="{{ $menu->icon }}"></i>
-                    @endif
-                    <span>{{ $menu->name }}</span>
+        @foreach(getmenu() as $menu)
+            @if($menu->section == 'header')
+                <li class="menu-header">{{ $menu->header_text }}</li>
+            @else
+                <li class="{{ $menu->children->count() > 0 ? 'has-submenu' : '' }}">
+                    <a href="{{ $menu->route ? route($menu->route) : '#' }}">
+                        @if($menu->icon)
+                            <i class="{{ $menu->icon }}"></i>
+                        @endif
+                        <span>{{ $menu->name }}</span>
+                        @if($menu->children->count() > 0)
+                            <span class="arrow"></span>
+                        @endif
+                    </a>
                     @if($menu->children->count() > 0)
-                        <span class="arrow"></span>
+                        <ul>
+                            @foreach($menu->children as $child)
+                                <li>
+                                    <a href="{{ $child->route ? route($child->route) : '#' }}">
+                                        @if($child->icon)
+                                            <i class="{{ $child->icon }}"></i>
+                                        @endif
+                                        {{ $child->name }}
+                                    </a>
+                                </li>
+                            @endforeach
+                        </ul>
                     @endif
-                </a>
-                @if($menu->children->count() > 0)
-                    <ul>
-                        @foreach($menu->children as $child)
-                            <li>
-                                <a href="{{ $child->route ? route($child->route) : '#' }}">
-                                    @if($child->icon)
-                                        <i class="{{ $child->icon }}"></i>
-                                    @endif
-                                    {{ $child->name }}
-                                </a>
-                            </li>
-                        @endforeach
-                    </ul>
-                @endif
-            </li>
-        @endif
-    @endforeach
-</ul>
+                </li>
+            @endif
+        @endforeach
+    </ul>
 </nav>
 
 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
