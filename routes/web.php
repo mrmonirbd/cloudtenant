@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\Route;
 // Public Routes
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('index');
 
 // Dashboard (Protected)
 Route::get('/dashboard', function () {

@@ -10,96 +10,70 @@ if (!function_exists('getMenusByRole')) {
      */
     function getMenusByRole($role = null)
     {
-        $role = $role ?? auth()->user()->role ?? 'guest';
-
+        $role = $role ?? (auth()->check() ? auth()->user()->role : 'guest');
+        if($role =='owner'){
+            $menus = menu::get();
+        } else {
+            $menus = auth()->user()->menus();
+        }
         // dd(auth()->user());
+        return $menus;
         
-        return Cache::remember("menus_role_{$role}", 3600, function () use ($role) {
-            return Menu::active()
-                ->byRole($role)
-                ->whereNull('parent_id')  
-                ->orderBy('order')
-                ->with(['children' => function($query) use ($role) {
-                    $query->active()
-                        ->byRole($role)
-                        ->orderBy('order');
-                }])
-                ->get();
-        });
+        
     }
 }
 
-if (!function_exists('buildMenu')) {
     /**
      * Build menu HTML
      */
-   function buildMenu($currentRoute = null)
-{
-    $html = '';
-    $user = auth()->user();
 
-    // Fetch menus based on role
-    if ($user->role === 'owner') {
-        // Fetch all menus
-        $menus = Menu::whereNull('parent_id')->orderBy('order')->with('children')->get();
-    } else {
-        // Fetch assigned menus for non-owner users
-        $menus = $user->menus()->with('children')->get();
+    function getmenu(){
+        $role = auth()->user()->role;
+        if($role =='owner'){
+             $menus = menu::get();
+        } else {
+        $menus = auth()->user()->menus()->get();
+        }
+        return $menus;
     }
 
-    // Set current route if not provided
-    $currentRoute = $currentRoute ?? request()->route()?->getName();
 
-    // Loop through each menu
-    foreach ($menus as $menu) {
-        // Check if the menu has children (submenus)
-        if ($menu->children->count() > 0) {
-            // Check if any child menu is active
-            $active = ($menu->route === $currentRoute || $menu->children->contains(function($child) use ($currentRoute) {
-                return $child->route === $currentRoute;
-            })) ? 'mm-active' : '';
 
-            // Build the parent menu (with submenus)
-            $html .= '<li class="mm-dropdown ' . $active . '">';
-            $html .= '<a class="has-arrow" href="#" aria-expanded="false">';
-            $html .= getMenuIcon($menu);
-            $html .= '<span>' . e($menu->name) . '</span>';
-            $html .= '</a>';
-            $html .= '<ul class="mm-collapse">';
-            
-            // Loop through child menus
-            foreach ($menu->children as $child) {
-                $childActive = $child->route === $currentRoute ? 'active' : '';
-                $url = getMenuUrl($child);
-                
-                $html .= '<li class="' . $childActive . '">';
-                $html .= '<a href="' . $url . '">';
-                $html .= getMenuIcon($child, true);
-                $html .= e($child->name);
+ function renderMenu($menus)
+    {
+        $html = '';
+        $menus = auth()->user()->menus();
+        dd($menus);
+
+        foreach ($menus as $menu) {
+            if ($menu->section == 'header') {
+                $html .= '<li class="menu-header">' . $menu->header_text . '</li>';
+            } else {
+                $hasChildren = $menu->children->count() > 0;
+                $html .= '<li class="' . ($hasChildren ? 'has-submenu' : '') . '">';
+                $html .= '<a href="' . ($menu->route ? route($menu->route) : '#') . '">';
+                if ($menu->icon) {
+                    $html .= '<i class="' . $menu->icon . '"></i>';
+                }
+                $html .= '<span>' . $menu->name . '</span>';
+                if ($hasChildren) {
+                    $html .= '<span class="arrow"></span>';
+                }
                 $html .= '</a>';
+
+                if ($hasChildren) {
+                    $html .= '<ul>';
+                    $html .= renderMenu($menu->children); // recursion for submenus
+                    $html .= '</ul>';
+                }
+
                 $html .= '</li>';
             }
-
-            // Close submenu
-            $html .= '</ul>';
-            $html .= '</li>';
-        } else {
-            // No children, just a simple menu item
-            $active = $menu->route === $currentRoute ? 'mm-active' : '';
-            $url = getMenuUrl($menu);
-
-            $html .= '<li class="' . $active . '">';
-            $html .= '<a href="' . $url . '">';
-            $html .= getMenuIcon($menu);
-            $html .= '<span>' . e($menu->name) . '</span>';
-            $html .= '</a>';
-            $html .= '</li>';
         }
+
+        return $html;
     }
 
-    return $html;
-}
-}
 
 if (!function_exists('getMenuIcon')) {
     /**
