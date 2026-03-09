@@ -227,16 +227,40 @@
             <!-- Permissions -->
             <div class="tab-pane fade" id="permissions" role="tabpanel" aria-labelledby="permissions-tab">
                 <div class="card p-3">
-                    <h5>Permissions</h5>
-                    @if($user->permissions && count($user->permissions) > 0)
+                   <h5>Set Permissions for {{ $user->name }}</h5>
+                    <form action="" method="POST">
+                        @csrf
+                        @method('PUT')
+
                         <ul>
-                            @foreach($user->permissions as $permission)
-                                <li>{{ $permission->name }}</li>
+                            @foreach(getmenu() as $menu)
+                            @php
+                               dd(auth()->user()->permissions);
+                            @endphp
+                                <li>
+                                    <div>
+                                        <input type="checkbox" name="permissions[]" value="{{ $menu->id }}"
+                                            {{ $user->permissions->contains($menu->id) ? 'checked' : '' }}>
+                                        {{ $menu->name }}
+                                    </div>
+
+                                    @if($menu->children->count() > 0)
+                                        <ul style="margin-left: 20px;">
+                                            @foreach($menu->children as $child)
+                                                <li>
+                                                    <input type="checkbox" name="permissions[]" value="{{ $child->id }}"
+                                                        {{ $user->permissions->contains($child->id) ? 'checked' : '' }}>
+                                                    {{ $child->name }}
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    @endif
+                                </li>
                             @endforeach
                         </ul>
-                    @else
-                        <p>No permissions assigned.</p>
-                    @endif
+
+                        <button type="submit" class="btn btn-primary">Save Permissions</button>
+                    </form>
                 </div>
             </div>
         </div>
