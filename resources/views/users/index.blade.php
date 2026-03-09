@@ -85,7 +85,7 @@
                             <input type="checkbox" class="user-checkbox form-check-input" value="{{ $user->id }}">
                         </td>
                         <th scope="row">
-                            <a href="#" class="question_content">{{ $user->id }}</a>
+                            <a href="{{ route('users.edit', $user->id) }}" class="question_content">{{ $user->id }}</a>
                         </th>
                         <td>{{ $user->name }}</td>
                         <td>{{ $user->email }}</td>
