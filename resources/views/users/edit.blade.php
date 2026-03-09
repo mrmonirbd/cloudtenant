@@ -234,7 +234,7 @@
 
     <ul>
         @php
-            // dd($user->roles);
+            // dd($user->role);
         @endphp
 
          @foreach(getmenu() as $menu)
@@ -244,7 +244,7 @@
                 <li class="{{ $menu->children->count() > 0 ? 'has-submenu' : '' }}">
                     <div>
                         <input type="checkbox" name="permissions[]" value="{{ $menu->id }}"
-                            @if(in_array($user->roles, ['owner', 'superadmin']))
+                            @if(in_array($user->role, ['owner', 'superadmin']))
                                 checked
                             @else
                                 {{ $user->permissions && $user->permissions->contains($menu->id) ? 'checked' : '' }}
@@ -262,7 +262,7 @@
                                 <li>
                                     <div>
                                         <input type="checkbox" name="permissions[]" value="{{ $child->id }}"
-                                            @if(in_array($user->roles, ['owner', 'superadmin']))
+                                            @if(in_array($user->role, ['owner', 'superadmin']))
                                                 checked
                                             @else
                                                 {{ $user->permissions && $user->permissions->contains($child->id) ? 'checked' : '' }}
